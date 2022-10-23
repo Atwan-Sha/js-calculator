@@ -42,6 +42,16 @@ function operate(op, x, y){
 // let opTest = operate('div',10,3);
 // console.log(opTest);
 
+const button = document.querySelector('.number');
+const display = document.querySelector('.display');
+
+//for(let button of buttons){
+    button.onclick = () => {
+        // display.innerText = 'Hi!';
+        console.log('button clicked!');
+    }
+
+
 
 
 

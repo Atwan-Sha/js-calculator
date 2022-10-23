@@ -1,7 +1,39 @@
-*{
+* {
     margin: 0;
     padding: 0;
     background-color: rgb(77, 76, 76);
     color: white;
 }
 
+h1, h2 {
+     text-align: center;
+}
+
+.calculator {
+    margin: auto;
+    width: 600px;
+    height: 600px;
+    background-color: rgb(46, 46, 46);
+}
+
+.display {
+    margin: auto;
+    width: 80%;
+    height: 80px;
+    background-color: rgb(121, 210, 210);
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: auto;
+    width: 80%;
+    height: 80%;
+}
+
+button {
+    width: 120px;
+    height: 120px;
+}

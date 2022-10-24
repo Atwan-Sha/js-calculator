@@ -1,19 +1,11 @@
 
-function add(x, y){
-    return x + y;
-}
+function add(x, y){ return x + y; }
 
-function subtract(x, y){
-    return x - y;
-}
+function subtract(x, y){ return x - y; }
 
-function multiply(x, y){
-    return x * y;
-}
+function multiply(x, y){ return x * y; }
 
-function divide(x, y){
-    return x / y;
-}
+function divide(x, y){ return x / y; }
 
 // function testOperators(){
 //     console.log('add 4+5 = ' + add(4,5));
@@ -39,17 +31,62 @@ function operate(op, x, y){
     }
     return result;
 }
-// let opTest = operate('div',10,3);
-// console.log(opTest);
 
-const button = document.querySelector('.number');
+const buttonListNum = document.querySelectorAll('button.num');
+const buttonListOp = document.querySelectorAll('button.op');
+const clearButton = document.querySelector('button.clear');
+const equalsButton = document.querySelector('button.equals');
+
 const display = document.querySelector('.display');
 
-//for(let button of buttons){
-    button.onclick = () => {
-        // display.innerText = 'Hi!';
-        console.log('button clicked!');
-    }
+let userInputNum;
+let inputX = null;
+let inputY = null;
+let inputOp;
+let result;
+let displayValue = '';
+let displayBuffer = '';
+
+for(let button of buttonListNum){
+    button.addEventListener('click', () => {
+        displayBuffer += button.textContent;
+        display.textContent = displayValue + displayBuffer;
+    });
+}
+
+for(let button of buttonListOp){
+    button.addEventListener('click', () => {
+        userInputNum = Number(displayBuffer);
+        inputOp = button.id;
+        if(inputX == null){
+            inputX = userInputNum;
+        }else{
+            inputY = userInputNum;
+            inputX = operate(inputOp, inputX, inputY);
+        }
+
+        displayBuffer += button.textContent;
+        displayValue += displayBuffer;
+        display.textContent = displayValue;
+        displayBuffer = '';
+
+        console.log({userInputNum, 
+                     inputX, 
+                     inputY, 
+                     displayValue, 
+                     displayBuffer, 
+                     inputOp
+        });
+
+    });
+}
+
+
+
+
+
+
+
 
 
 

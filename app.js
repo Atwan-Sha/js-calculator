@@ -32,7 +32,7 @@ let inputOp = null;
 let checkOpSelect = false;
 let displayValue = '';
 let displayBuffer = '';
-const ZERO_ERR_MSG = 'Whooaa! Stop that! You can\'t divide by zero! The calculator will explode!';
+const ZERO_ERR_MSG = 'Whooaa! Stop that! The calculator will explode!';
 
 // *DOM Nodes
 const buttonListNum = document.querySelectorAll('button.num');

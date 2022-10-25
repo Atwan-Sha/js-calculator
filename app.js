@@ -117,4 +117,5 @@ equalsButton.addEventListener('click', () => {
     }
 });
 
-
+// *add advanced features
+// !upload to github page!

@@ -29,7 +29,6 @@ let userInputNum;
 let inputX = null;
 let inputY = null;
 let inputOp = null;
-//let checkDisplayFill = true;
 let checkOpSelect = false;
 let displayValue = '';
 let displayBuffer = '';
@@ -39,16 +38,17 @@ const buttonListNum = document.querySelectorAll('button.num');
 const buttonListOp = document.querySelectorAll('button.op');
 const clearButton = document.querySelector('button#clear');
 const equalsButton = document.querySelector('button#equals');
-const display = document.querySelector('.display');
+const mainDisplay = document.querySelector('.display h1');
+const secondaryDisplay = document.querySelector('.display h2');
 
 // *Event Handlers:
 // number buttons
 for(let button of buttonListNum){
     button.addEventListener('click', () => {
-        // update display
-        if(display.textContent.length < 15){
+        // update mainDisplay
+        if(mainDisplay.textContent.length < 15){
             displayBuffer += button.textContent;
-            display.textContent = displayValue + displayBuffer;
+            mainDisplay.textContent = displayValue + displayBuffer;
             checkOpSelect = true;
         }
     });
@@ -64,23 +64,16 @@ for(let button of buttonListOp){
             }else{
                 inputY = userInputNum;
                 inputX = operate(inputOp, inputX, inputY);
+                secondaryDisplay.textContent = inputX;
             }
             inputOp = button.id;
-            // update display
+            // update mainDisplay
             displayBuffer += button.textContent;
             displayValue += displayBuffer;
-            display.textContent = displayValue;
+            mainDisplay.textContent = displayValue;
             displayBuffer = '';
             checkOpSelect = false;
         }
-        // console.log({userInputNum, 
-        //              inputX, 
-        //              inputY, 
-        //              displayValue, 
-        //              displayBuffer, 
-        //              inputOp
-        // });
-
     });
 }
 // clear button
@@ -90,33 +83,36 @@ clearButton.addEventListener('click', () => {
     inputOp = null;
     displayValue = '';
     displayBuffer = '';
-    display.textContent = '0';
+    mainDisplay.textContent = '0';
     checkOpSelect = false;
 });
 // equals button
 equalsButton.addEventListener('click', () => {
     userInputNum = Number(displayBuffer);
     if(inputX == null){
-        display.textContent = userInputNum;
+        mainDisplay.textContent = userInputNum;
     }else if(displayBuffer == ''){
-        display.textContent = inputX;
+        mainDisplay.textContent = inputX;
     }else{
         inputY = userInputNum;
         inputX = operate(inputOp, inputX, inputY);
-        display.textContent = inputX;
+        mainDisplay.textContent = inputX;
     }
+    secondaryDisplay.textContent = '';
 });
 
 
-// ! Check for display overflow (especially decimals)
+// Check for mainDisplay overflow (especially decimals)
 // ! Divide-by-zero snarky error message
-// ! Add display for partial calculations
+// Add display for partial calculations
 
 
-
-
-
-
-
+        // console.log({userInputNum, 
+        //              inputX, 
+        //              inputY, 
+        //              displayValue, 
+        //              displayBuffer, 
+        //              inputOp
+        // });
 
 

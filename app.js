@@ -43,7 +43,7 @@ const mainDisplay = document.querySelector('.display h1');
 const secondaryDisplay = document.querySelector('.display h2');
 
 // *Event Handlers:
-// number buttons
+// *number buttons
 for(let button of buttonListNum){
     button.addEventListener('click', () => {
         // update mainDisplay
@@ -55,7 +55,7 @@ for(let button of buttonListNum){
         }
     });
 }
-// operator buttons
+// *operator buttons
 for(let button of buttonListOp){
     button.addEventListener('click', () => {
         // check division by zero
@@ -64,9 +64,8 @@ for(let button of buttonListOp){
             secondaryDisplay.style.color = 'red';
             return;
         }
-        // calculation
+        // calculate
         if(checkOpSelect){
-            //userInputNum = Number(displayBuffer);
             if(inputX == null){
                 inputX = userInputNum;
             }else{
@@ -84,8 +83,9 @@ for(let button of buttonListOp){
         }
     });
 }
-// clear button
+// *clear button
 clearButton.addEventListener('click', () => {
+    userInputNum = 0;
     inputX = null;
     inputY = null;
     inputOp = null;
@@ -96,7 +96,7 @@ clearButton.addEventListener('click', () => {
     secondaryDisplay.style.color = 'rgb(100, 100, 100)';
     checkOpSelect = false;
 });
-// equals button
+// *equals button
 equalsButton.addEventListener('click', () => {
     // check division by zero
     if(inputOp == 'div' && userInputNum == 0){
@@ -104,31 +104,17 @@ equalsButton.addEventListener('click', () => {
         secondaryDisplay.style.color = 'red';
         return;
     }
-    //userInputNum = Number(displayBuffer);
+    // update display & calculate
     if(inputX == null){
-        mainDisplay.textContent = userInputNum;
+        mainDisplay.textContent = String(userInputNum);
     }else if(displayBuffer == ''){
         mainDisplay.textContent = inputX;
     }else{
         inputY = userInputNum;
         inputX = operate(inputOp, inputX, inputY);
         mainDisplay.textContent = inputX;
+        secondaryDisplay.textContent = '';
     }
-    secondaryDisplay.textContent = '';
 });
-
-
-// Check for mainDisplay overflow (especially decimals)
-// Divide-by-zero snarky error message
-// Add display for partial calculations
-
-
-        // console.log({userInputNum, 
-        //              inputX, 
-        //              inputY, 
-        //              displayValue, 
-        //              displayBuffer, 
-        //              inputOp
-        // });
 
 

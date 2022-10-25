@@ -47,7 +47,7 @@ const secondaryDisplay = document.querySelector('.display h2');
 for(let button of buttonListNum){
     button.addEventListener('click', () => {
         // update mainDisplay
-        if(mainDisplay.textContent.length < 15){
+        if(mainDisplay.textContent.length < 10){
             displayBuffer += button.textContent;
             mainDisplay.textContent = displayValue + displayBuffer;
             userInputNum = Number(displayBuffer);
@@ -71,7 +71,11 @@ for(let button of buttonListOp){
             }else{
                 inputY = userInputNum;
                 inputX = operate(inputOp, inputX, inputY);
-                secondaryDisplay.textContent = inputX;
+                // overflow check
+                if(String(inputX).length > 10){
+                    inputX = inputX.toFixed(10);
+                }
+                secondaryDisplay.textContent = String(inputX);
             }
             inputOp = button.id;
             // update mainDisplay
@@ -108,14 +112,15 @@ equalsButton.addEventListener('click', () => {
     if(inputX == null){
         mainDisplay.textContent = String(userInputNum);
     }else if(displayBuffer == ''){
-        mainDisplay.textContent = inputX;
+        mainDisplay.textContent = String(inputX);
     }else{
         inputY = userInputNum;
         inputX = operate(inputOp, inputX, inputY);
-        mainDisplay.textContent = inputX;
+        // overflow check
+        if(String(inputX).length > 10){
+            inputX = inputX.toFixed(10);
+        }
+        mainDisplay.textContent = String(inputX);
         secondaryDisplay.textContent = '';
     }
 });
-
-// *add advanced features
-// !upload to github page!

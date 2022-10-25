@@ -32,6 +32,7 @@ let inputOp = null;
 let checkOpSelect = false;
 let displayValue = '';
 let displayBuffer = '';
+const ZERO_ERR_MSG = 'Whooaa! Stop that! You can\'t divide by zero! The calculator will explode!';
 
 // *DOM Nodes
 const buttonListNum = document.querySelectorAll('button.num');
@@ -49,6 +50,7 @@ for(let button of buttonListNum){
         if(mainDisplay.textContent.length < 15){
             displayBuffer += button.textContent;
             mainDisplay.textContent = displayValue + displayBuffer;
+            userInputNum = Number(displayBuffer);
             checkOpSelect = true;
         }
     });
@@ -56,9 +58,15 @@ for(let button of buttonListNum){
 // operator buttons
 for(let button of buttonListOp){
     button.addEventListener('click', () => {
-        if(checkOpSelect){
+        // check division by zero
+        if(inputOp == 'div' && userInputNum == 0){
+            secondaryDisplay.textContent = ZERO_ERR_MSG;
+            secondaryDisplay.style.color = 'red';
+            return;
+        }
         // calculation
-            userInputNum = Number(displayBuffer);
+        if(checkOpSelect){
+            //userInputNum = Number(displayBuffer);
             if(inputX == null){
                 inputX = userInputNum;
             }else{
@@ -84,11 +92,19 @@ clearButton.addEventListener('click', () => {
     displayValue = '';
     displayBuffer = '';
     mainDisplay.textContent = '0';
+    secondaryDisplay.textContent = '-';
+    secondaryDisplay.style.color = 'rgb(100, 100, 100)';
     checkOpSelect = false;
 });
 // equals button
 equalsButton.addEventListener('click', () => {
-    userInputNum = Number(displayBuffer);
+    // check division by zero
+    if(inputOp == 'div' && userInputNum == 0){
+        secondaryDisplay.textContent = ZERO_ERR_MSG;
+        secondaryDisplay.style.color = 'red';
+        return;
+    }
+    //userInputNum = Number(displayBuffer);
     if(inputX == null){
         mainDisplay.textContent = userInputNum;
     }else if(displayBuffer == ''){
@@ -103,7 +119,7 @@ equalsButton.addEventListener('click', () => {
 
 
 // Check for mainDisplay overflow (especially decimals)
-// ! Divide-by-zero snarky error message
+// Divide-by-zero snarky error message
 // Add display for partial calculations
 
 

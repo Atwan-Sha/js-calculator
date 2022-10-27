@@ -1,6 +1,6 @@
 // *CALCULATOR APP SCRIPT
 
-// *Operators
+// *Operator functions
 function add(x, y){ return x + y; }
 function subtract(x, y){ return x - y; }
 function multiply(x, y){ return x * y; }
@@ -25,11 +25,11 @@ function operate(op, x, y){
 }
 
 // *Data Storage
-let userInputNum;
+let userInputNum = null;
 let inputX = null;
 let inputY = null;
 let inputOp = null;
-let checkOpSelect = false;
+let opSelect = false;
 let displayValue = '';
 let displayBuffer = '';
 const ZERO_ERR_MSG = 'Whooaa! Stop that! The calculator will explode!';
@@ -42,85 +42,131 @@ const equalsButton = document.querySelector('button#equals');
 const mainDisplay = document.querySelector('.display h1');
 const secondaryDisplay = document.querySelector('.display h2');
 
-// *Event Handlers:
-// *number buttons
-for(let button of buttonListNum){
-    button.addEventListener('click', () => {
-        // update mainDisplay
-        if(mainDisplay.textContent.length < 10){
-            displayBuffer += button.textContent;
-            mainDisplay.textContent = displayValue + displayBuffer;
-            userInputNum = Number(displayBuffer);
-            checkOpSelect = true;
-        }
-    });
+/*
+*displayBuffer += value;
+*mainDisplay.textContent = displayValue + displayBuffer;
+*userInputNum = Number(displayBuffer);
+*opSelect = true;
+
+?displayBuffer += button.textContent;
+?displayValue += displayBuffer;
+?mainDisplay.textContent = displayValue;
+?displayBuffer = '';
+?opSelect = false;
+*/
+
+// *Helper functions
+function checkDivByZero(){
+    if(inputOp == 'div' && userInputNum == 0){
+        secondaryDisplay.textContent = ZERO_ERR_MSG;
+        secondaryDisplay.style.color = 'red';
+        return true;
+    }else{
+        return false;
+    }
 }
-// *operator buttons
-for(let button of buttonListOp){
-    button.addEventListener('click', () => {
-        // check division by zero
-        if(inputOp == 'div' && userInputNum == 0){
-            secondaryDisplay.textContent = ZERO_ERR_MSG;
-            secondaryDisplay.style.color = 'red';
-            return;
-        }
-        // calculate
-        if(checkOpSelect){
-            if(inputX == null){
-                inputX = userInputNum;
-            }else{
-                inputY = userInputNum;
-                inputX = operate(inputOp, inputX, inputY);
-                // overflow check
-                if(String(inputX).length > 10){
-                    inputX = inputX.toFixed(10);
-                }
-                secondaryDisplay.textContent = String(inputX);
-            }
-            inputOp = button.id;
-            // update mainDisplay
-            displayBuffer += button.textContent;
-            displayValue += displayBuffer;
-            mainDisplay.textContent = displayValue;
-            displayBuffer = '';
-            checkOpSelect = false;
-        }
-    });
+
+function checkDisplayOverflow(){
+    if(String(inputX).length > 10){
+        inputX = inputX.toFixed(10);
+    }
 }
-// *clear button
-clearButton.addEventListener('click', () => {
-    userInputNum = 0;
-    inputX = null;
-    inputY = null;
-    inputOp = null;
+
+function checkOpChange(value){
+    if(inputOp != null && inputOp != value){
+        inputOp = value;
+        displayValue = displayValue.slice(0, -1);
+        opSelect = false;
+        return true;
+    }else{
+        return false;
+    }
+}
+
+function updateDisplay(value){
+    if(mainDisplay.textContent.length < 10){
+        displayBuffer += value;
+        displayValue += displayBuffer;
+        mainDisplay.textContent = displayValue;
+        displayBuffer = '';
+    }
+}
+
+function resetDisplay(){
     displayValue = '';
     displayBuffer = '';
     mainDisplay.textContent = '0';
     secondaryDisplay.textContent = '-';
     secondaryDisplay.style.color = 'rgb(100, 100, 100)';
-    checkOpSelect = false;
-});
+}
+
+function resetLogic(){
+    userInputNum = null;
+    inputX = null;
+    inputY = null;
+    inputOp = null;
+    opSelect = false;
+}
+
+
+// *EVENT HANDLERS:
+// *number buttons
+for(let button of buttonListNum){
+    button.addEventListener('click', () => {
+        updateDisplay(button.textContent);
+        userInputNum = Number(button.textContent);
+        opSelect = true;
+    });
+}
+
+// *operator buttons
+for(let button of buttonListOp){
+    button.addEventListener('click', () => {
+        if(checkDivByZero()){return;}
+        // calculate
+        if(opSelect){
+            if(inputX == null){
+                inputX = userInputNum;
+            }else{
+                inputY = userInputNum;
+                inputX = operate(inputOp, inputX, inputY);
+                checkDisplayOverflow();
+                secondaryDisplay.textContent = String(inputX);
+            }
+            inputOp = button.id;
+            updateDisplay(button.textContent);
+            opSelect = false;
+        }
+        if(checkOpChange(button.id)){
+            updateDisplay(button.textContent);
+        }
+    });
+}
+
 // *equals button
 equalsButton.addEventListener('click', () => {
-    // check division by zero
-    if(inputOp == 'div' && userInputNum == 0){
-        secondaryDisplay.textContent = ZERO_ERR_MSG;
-        secondaryDisplay.style.color = 'red';
-        return;
-    }
-    // update display & calculate
-    if(inputX == null){
-        mainDisplay.textContent = String(userInputNum);
-    }else if(displayBuffer == ''){
-        mainDisplay.textContent = String(inputX);
-    }else{
+    if(checkDivByZero()){return;}
+    // ! add correct calculation after result
+    // ! fix faulty logic below
+    // calculate
+    if(inputX == null && displayValue != ''){
+        //updateDisplay(String(userInputNum));
+    }else if(inputX != null && !opSelect){
+        displayValue = displayValue.slice(0, -1);
+        updateDisplay('');
+        opSelect = true;
+    }else if(inputX != null){
         inputY = userInputNum;
         inputX = operate(inputOp, inputX, inputY);
-        // overflow check
-        if(String(inputX).length > 10){
-            inputX = inputX.toFixed(10);
-        }
-        mainDisplay.textContent = String(inputX);
+        checkDisplayOverflow();
+        resetDisplay();
+        updateDisplay(String(inputX));
         secondaryDisplay.textContent = '';
     }
+});
+
+// *clear button
+clearButton.addEventListener('click', () => {
+    resetDisplay();
+    resetLogic();
 });

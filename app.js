@@ -25,13 +25,15 @@ function operate(op, x, y){
 }
 
 // *Data Storage
-let userInputNum = null;
+let userInputNum = '';
 let inputX = null;
 let inputY = null;
 let inputOp = null;
 let opSelect = false;
 let displayValue = '';
 let displayBuffer = '';
+let blinkID = null;
+let blinkOn = false;
 const ZERO_ERR_MSG = 'Whooaa! Stop that! The calculator will explode!';
 
 // *DOM Nodes
@@ -42,22 +44,17 @@ const equalsButton = document.querySelector('button#equals');
 const mainDisplay = document.querySelector('.display h1');
 const secondaryDisplay = document.querySelector('.display h2');
 
-/*
-*displayBuffer += value;
-*mainDisplay.textContent = displayValue + displayBuffer;
-*userInputNum = Number(displayBuffer);
-*opSelect = true;
-
-?displayBuffer += button.textContent;
-?displayValue += displayBuffer;
-?mainDisplay.textContent = displayValue;
-?displayBuffer = '';
-?opSelect = false;
-*/
-
 // *Helper functions
+function checkZero(buttonValue){
+    if(buttonValue == '0' && mainDisplay.textContent == '0'){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 function checkDivByZero(){
-    if(inputOp == 'div' && userInputNum == 0){
+    if(inputOp == 'div' && userInputNum == '0' && inputX != null){
         secondaryDisplay.textContent = ZERO_ERR_MSG;
         secondaryDisplay.style.color = 'red';
         return true;
@@ -67,14 +64,14 @@ function checkDivByZero(){
 }
 
 function checkDisplayOverflow(){
-    if(String(inputX).length > 10){
-        inputX = inputX.toFixed(10);
+    if(String(inputX).length > 6){
+        inputX = inputX.toFixed(6);
     }
 }
 
-function checkOpChange(value){
-    if(inputOp != null && inputOp != value){
-        inputOp = value;
+function checkOpChange(buttonValue){
+    if(inputOp != null && inputOp != buttonValue){
+        inputOp = buttonValue;
         displayValue = displayValue.slice(0, -1);
         opSelect = false;
         return true;
@@ -83,61 +80,84 @@ function checkOpChange(value){
     }
 }
 
-function updateDisplay(value){
-    if(mainDisplay.textContent.length < 10){
-        displayBuffer += value;
-        displayValue += displayBuffer;
-        mainDisplay.textContent = displayValue;
-        displayBuffer = '';
+function updateDisplay(buttonValue){
+    displayValue += buttonValue;
+    if(displayValue.length > 8){
+        displayValue = displayValue.slice(0, 8);
     }
+    mainDisplay.textContent = displayValue;
 }
 
 function resetDisplay(){
+    clearInterval(blinkID);
+    blinkOn = false;
     displayValue = '';
-    displayBuffer = '';
     mainDisplay.textContent = '0';
     secondaryDisplay.textContent = '-';
     secondaryDisplay.style.color = 'rgb(100, 100, 100)';
 }
 
 function resetLogic(){
-    userInputNum = null;
+    userInputNum = '';
     inputX = null;
     inputY = null;
     inputOp = null;
     opSelect = false;
 }
 
+function blink(){
+    if(!blinkOn){
+        blinkID = setInterval(() => {
+            if(mainDisplay.textContent == displayValue){
+                mainDisplay.textContent = '';
+            }else{
+                mainDisplay.textContent = displayValue;
+            }
+        }, 500);
+        blinkOn = true;
+    }
+}
 
 // *EVENT HANDLERS:
 // *number buttons
 for(let button of buttonListNum){
     button.addEventListener('click', () => {
-        updateDisplay(button.textContent);
-        userInputNum = Number(button.textContent);
-        opSelect = true;
+        if(checkZero(button.textContent)){
+            opSelect = true;
+            displayValue = '0';
+            blink();
+        }else if(displayValue != '0'){
+            updateDisplay(button.textContent);
+            userInputNum += button.textContent;
+            opSelect = true;
+        }
     });
 }
 
 // *operator buttons
 for(let button of buttonListOp){
     button.addEventListener('click', () => {
+        if(blinkOn){
+            clearInterval(blinkID);
+            blinkOn = false;
+        }
         if(checkDivByZero()){return;}
-        // calculate
         if(opSelect){
+            // calculate
             if(inputX == null){
-                inputX = userInputNum;
+                inputX = Number(userInputNum);
             }else{
-                inputY = userInputNum;
+                inputY = Number(userInputNum);
                 inputX = operate(inputOp, inputX, inputY);
                 checkDisplayOverflow();
                 secondaryDisplay.textContent = String(inputX);
             }
+            // update
+            userInputNum = '';
             inputOp = button.id;
-            updateDisplay(button.textContent);
             opSelect = false;
-        }
-        if(checkOpChange(button.id)){
+            updateDisplay(button.textContent);
+        }else if(checkOpChange(button.id)){
             updateDisplay(button.textContent);
         }
     });
@@ -145,22 +165,28 @@ for(let button of buttonListOp){
 
 // *equals button
 equalsButton.addEventListener('click', () => {
+    if(blinkOn){
+        clearInterval(blinkID);
+        blinkOn = false; 
+        updateDisplay('');
+    }
     if(checkDivByZero()){return;}
-    // ! add correct calculation after result
-    // ! fix faulty logic below
-    // calculate
-    if(inputX == null && displayValue != ''){
-        //updateDisplay(String(userInputNum));
-    }else if(inputX != null && !opSelect){
+    if(inputX != null && !opSelect){
+        userInputNum = String(inputX);
+        inputX = null;
         displayValue = displayValue.slice(0, -1);
         updateDisplay('');
         opSelect = true;
     }else if(inputX != null){
-        inputY = userInputNum;
+        // calculate
+        inputY = Number(userInputNum);
         inputX = operate(inputOp, inputX, inputY);
+        // update
+        userInputNum = String(inputX);
         checkDisplayOverflow();
         resetDisplay();
         updateDisplay(String(inputX));
+        inputX = null;
         secondaryDisplay.textContent = '';
     }
 });

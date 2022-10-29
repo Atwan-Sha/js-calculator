@@ -63,9 +63,9 @@ function checkDivByZero(){
     }
 }
 
-function checkDisplayOverflow(){
+function checkOverflow(){
     if(String(inputX).length > 6){
-        inputX = inputX.toFixed(6);
+        inputX = Number(inputX.toFixed(6));
     }
 }
 
@@ -149,7 +149,7 @@ for(let button of buttonListOp){
             }else{
                 inputY = Number(userInputNum);
                 inputX = operate(inputOp, inputX, inputY);
-                checkDisplayOverflow();
+                checkOverflow();
                 secondaryDisplay.textContent = String(inputX);
             }
             // update
@@ -172,22 +172,25 @@ equalsButton.addEventListener('click', () => {
     }
     if(checkDivByZero()){return;}
     if(inputX != null && !opSelect){
+        // update
         userInputNum = String(inputX);
-        inputX = null;
         displayValue = displayValue.slice(0, -1);
-        updateDisplay('');
+        resetDisplay();
+        updateDisplay(userInputNum);
+        secondaryDisplay.textContent = '';
+        inputX = null;
         opSelect = true;
     }else if(inputX != null){
         // calculate
         inputY = Number(userInputNum);
         inputX = operate(inputOp, inputX, inputY);
+        checkOverflow();
         // update
         userInputNum = String(inputX);
-        checkDisplayOverflow();
         resetDisplay();
-        updateDisplay(String(inputX));
-        inputX = null;
+        updateDisplay(userInputNum);
         secondaryDisplay.textContent = '';
+        inputX = null;
     }
 });
 

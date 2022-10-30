@@ -45,7 +45,7 @@ const mainDisplay = document.querySelector('.display h1');
 const secondaryDisplay = document.querySelector('.display h2');
 
 // *Helper functions
-function checkZero(buttonValue){
+function checkFirstZero(buttonValue){
     if(buttonValue == '0' && mainDisplay.textContent == '0'){
         return true;
     }else{
@@ -122,10 +122,12 @@ function blink(){
 // *number buttons
 for(let button of buttonListNum){
     button.addEventListener('click', () => {
-        if(checkZero(button.textContent)){
+        if(checkFirstZero(button.textContent)){
             opSelect = true;
             displayValue = '0';
             blink();
+        }else if(userInputNum == '0'){
+            return;
         }else if(displayValue != '0'){
             updateDisplay(button.textContent);
             userInputNum += button.textContent;

@@ -30,6 +30,7 @@ let inputX = null;
 let inputY = null;
 let inputOp = null;
 let opSelect = false;
+let result = false;
 let displayValue = '';
 let displayBuffer = '';
 let blinkID = null;
@@ -103,6 +104,7 @@ function resetLogic(){
     inputY = null;
     inputOp = null;
     opSelect = false;
+    result = false;
 }
 
 function blink(){
@@ -126,7 +128,7 @@ for(let button of buttonListNum){
             opSelect = true;
             displayValue = '0';
             blink();
-        }else if(userInputNum == '0'){
+        }else if(userInputNum == '0' || result){
             return;
         }else if(displayValue != '0'){
             updateDisplay(button.textContent);
@@ -162,6 +164,7 @@ for(let button of buttonListOp){
         }else if(checkOpChange(button.id)){
             updateDisplay(button.textContent);
         }
+        result = false;
     });
 }
 
@@ -182,6 +185,7 @@ equalsButton.addEventListener('click', () => {
         secondaryDisplay.textContent = '';
         inputX = null;
         opSelect = true;
+        result = true;
     }else if(inputX != null){
         // calculate
         inputY = Number(userInputNum);
@@ -193,6 +197,7 @@ equalsButton.addEventListener('click', () => {
         updateDisplay(userInputNum);
         secondaryDisplay.textContent = '';
         inputX = null;
+        result = true;
     }
 });
 

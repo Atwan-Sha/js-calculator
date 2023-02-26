@@ -1,3 +1,3 @@
-# Atwan-Sha-frontend-program-js-assignment-p1
+# js-calculator
 Calculator web app
-Link: https://atwan-sha.github.io/frontend-program-js-assignment-p2/
+Link: https://atwan-sha.github.io/js-calculator/

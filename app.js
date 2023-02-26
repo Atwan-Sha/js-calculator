@@ -33,6 +33,7 @@ let opSelect = false;
 let result = false;
 let displayValue = '';
 let displayBuffer = '';
+let overflow = false;
 let blinkID = null;
 let blinkOn = false;
 const ZERO_ERR_MSG = 'Whooaa! Stop that! The calculator will explode!';
@@ -67,6 +68,7 @@ function checkDivByZero(){
 function checkOverflow(){
     if(String(inputX).length > 6){
         inputX = Number(inputX.toFixed(6));
+        overflow = true;
     }
 }
 
@@ -124,6 +126,7 @@ function blink(){
 // *number buttons
 for(let button of buttonListNum){
     button.addEventListener('click', () => {
+        // if(overflow == true){return;}
         if(checkFirstZero(button.textContent)){
             opSelect = true;
             displayValue = '0';
